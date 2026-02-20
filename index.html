@@ -4,162 +4,322 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>P. Sri Rishikesh | Portfolio</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
         :root {
-            --primary-color: #00d2ff;
-            --secondary-color: #3a7bd5;
-            --bg-dark: #0f0f0f;
-            --card-bg: rgba(255, 255, 255, 0.05);
+            --primary: #007AFF;
+            --secondary: #00d4ff;
+            --dark: #0a0a0a;
+            --light: #f4f4f4;
+            --glass: rgba(255, 255, 255, 0.1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background-color: var(--bg-dark); color: white; overflow-x: hidden; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
 
-        /* Background Animation */
-        .bg-gradient {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #0f0f0f 100%);
+        body {
+            background-color: var(--dark);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* --- Background Animation --- */
+        .bg-animate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1a1a1a 0%, #000 100%);
         }
 
-        header {
-            height: 100vh; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; text-align: center;
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        h1 { font-size: 4rem; margin-bottom: 10px; background: linear-gradient(to right, #00d2ff, #91eae4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .typing { font-size: 1.5rem; color: #ccc; }
+        .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 30px;
+            transition: 0.3s;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nav-links a:hover { color: var(--primary); }
 
-        .container { max-width: 1100px; margin: auto; padding: 50px 20px; }
-        section { padding: 80px 0; }
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+        }
 
-        .section-title { font-size: 2.5rem; margin-bottom: 40px; text-align: center; color: var(--primary-color); }
+        .hero h1 {
+            font-size: 4rem;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
 
-        /* Cards & Grid */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .hero p { font-size: 1.2rem; color: #ccc; max-width: 600px; }
+
+        /* --- Sections --- */
+        section { padding: 100px 10%; }
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            text-align: center;
+            position: relative;
+        }
+        .section-title::after {
+            content: '';
+            width: 50px;
+            height: 4px;
+            background: var(--primary);
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* --- Grid Layouts --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
         .card {
-            background: var(--card-bg); padding: 30px; border-radius: 20px;
-            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: var(--glass);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: 0.4s;
+            cursor: default;
         }
-        .card:hover { transform: translateY(-10px); box-shadow: 0 10px 30px rgba(0, 210, 255, 0.2); }
 
-        /* Skill Badges */
-        .badge-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
-        .badge { background: var(--secondary-color); padding: 5px 15px; border-radius: 50px; font-size: 0.9rem; }
-
-        /* Dialpad Button */
-        .cta-button {
-            display: inline-block; margin-top: 20px; padding: 15px 35px;
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            color: white; text-decoration: none; border-radius: 50px;
-            font-weight: bold; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            background: rgba(255,255,255,0.15);
         }
-        .cta-button:hover { opacity: 0.9; transform: scale(1.05); }
 
-        footer { text-align: center; padding: 40px; color: #666; font-size: 0.8rem; }
+        .skill-tag {
+            display: inline-block;
+            background: var(--primary);
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.8rem;
+        }
+
+        /* --- Contact Form --- */
+        .contact-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 20px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            color: white;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        button:hover { background: var(--secondary); transform: scale(1.05); }
+
+        /* --- Floating Call Button --- */
+        .dialer-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: #25D366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            text-decoration: none;
+            transition: 0.3s;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            nav { padding: 20px; }
+            .nav-links { display: none; }
+            .hero h1 { font-size: 2.5rem; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="bg-gradient"></div>
+    <div class="bg-animate"></div>
 
-    <header>
-        <h1 data-aos="zoom-in">P. Sri Rishikesh</h1>
-        <div class="typing-container">
-            <span class="typing"></span>
+    <nav>
+        <div class="logo">PSR.</div>
+        <div class="nav-links">
+            <a href="#about">About</a>
+            <a href="#education">Education</a>
+            <a href="#skills">Skills</a>
+            <a href="#contact">Contact</a>
         </div>
-        <a href="tel:7815852866" class="cta-button" data-aos="fade-up">
-            <i class="fas fa-phone"></i> Call Me Now
-        </a>
-    </header>
+    </nav>
 
-    <div class="container">
-        <section id="education">
-            <h2 class="section-title" data-aos="fade-right">Education</h2>
-            <div class="grid">
-                <div class="card" data-aos="fade-up">
-                    <h3>B.Tech</h3>
-                    <p>Narayana College</p>
-                    <p><strong>CGPA: 8.0</strong></p>
-                </div>
-                <div class="card" data-aos="fade-up" data-aos-delay="100">
-                    <h3>Schooling</h3>
-                    <p>KKR Gowtham School</p>
-                    <p>High School Excellence</p>
+    <section class="hero">
+        <h1 data-aos="zoom-in">P. Sri Rishikesh</h1>
+        <p data-aos="fade-up" data-aos-delay="200">
+            Computer Programmer | Tech Enthusiast | Sportsman
+        </p>
+        <div style="margin-top: 30px;" data-aos="fade-up" data-aos-delay="400">
+            <a href="#contact"><button>Get In Touch</button></a>
+        </div>
+    </section>
+
+    <section id="about" data-aos="fade-up">
+        <h2 class="section-title">Professional Profile</h2>
+        <div class="grid">
+            <div class="card">
+                <i data-lucide="user" style="color: var(--primary); margin-bottom: 15px;"></i>
+                <h3>Who I Am</h3>
+                <p>A passionate learner and programmer. I thrive on solving complex problems and am always eager to learn new things to expand my technical horizon.</p>
+            </div>
+            <div class="card">
+                <i data-lucide="trophy" style="color: var(--primary); margin-bottom: 15px;"></i>
+                <h3>Sportsman Spirit</h3>
+                <p>I am a "good sports person" who carries the values of teamwork, discipline, and persistence from the field into my coding projects.</p>
+            </div>
+            <div class="card">
+                <i data-lucide="heart" style="color: var(--primary); margin-bottom: 15px;"></i>
+                <h3>Hobbies</h3>
+                <p>When I'm not coding, you'll find me listening to music, reading books, or immersed in gaming.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="education" style="background: rgba(255,255,255,0.02);">
+        <h2 class="section-title">Academic Journey</h2>
+        <div class="grid">
+            <div class="card" data-aos="fade-right">
+                <h3>B.Tech</h3>
+                <p style="color: var(--primary); font-weight: bold;">Narayana College</p>
+                <p>CGPA: 8.0</p>
+            </div>
+            <div class="card" data-aos="fade-left">
+                <h3>Schooling</h3>
+                <p style="color: var(--primary); font-weight: bold;">KKR Gowtham School</p>
+                <p>Foundation of my academic excellence.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills">
+        <h2 class="section-title">Skills & Languages</h2>
+        <div class="grid">
+            <div class="card" data-aos="flip-up">
+                <h3>Coding Stack</h3>
+                <div style="margin-top: 15px;">
+                    <span class="skill-tag">Python</span>
+                    <span class="skill-tag">C</span>
+                    <span class="skill-tag">C++</span>
+                    <span class="skill-tag">Java</span>
+                    <span class="skill-tag">HTML</span>
                 </div>
             </div>
-        </section>
-
-        <section id="skills">
-            <h2 class="section-title" data-aos="fade-left">Technical Arsenal</h2>
-            <div class="grid">
-                <div class="card" data-aos="flip-left">
-                    <i class="fas fa-code fa-2x"></i>
-                    <h3>Languages</h3>
-                    <div class="badge-container">
-                        <span class="badge">Python</span> <span class="badge">Java</span>
-                        <span class="badge">C</span> <span class="badge">C++</span> <span class="badge">HTML</span>
-                    </div>
-                </div>
-                <div class="card" data-aos="flip-left" data-aos-delay="200">
-                    <i class="fas fa-language fa-2x"></i>
-                    <h3>Communication</h3>
-                    <div class="badge-container">
-                        <span class="badge">English</span> <span class="badge">Telugu</span> <span class="badge">Hindi</span>
-                    </div>
+            <div class="card" data-aos="flip-up" data-aos-delay="200">
+                <h3>Communication</h3>
+                <div style="margin-top: 15px;">
+                    <span class="skill-tag">English</span>
+                    <span class="skill-tag">Hindi</span>
+                    <span class="skill-tag">Telugu</span>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="personal">
-            <h2 class="section-title" data-aos="fade-up">Beyond the Code</h2>
-            <div class="grid">
-                <div class="card" data-aos="zoom-in">
-                    <h3>Interests</h3>
-                    <ul>
-                        <li>Listening to Music 🎵</li>
-                        <li>Reading Books 📚</li>
-                        <li>Playing Games 🎮</li>
-                    </ul>
-                </div>
-                <div class="card" data-aos="zoom-in" data-aos-delay="200">
-                    <h3>Strengths</h3>
-                    <p>Good Sports Person 🏆</p>
-                    <p>Passionate about learning new things.</p>
-                </div>
+    <section id="contact">
+        <h2 class="section-title">Let's Connect</h2>
+        <div class="contact-container" data-aos="zoom-in">
+            <form action="mailto:rishi.peduru@gmail.com" method="post" enctype="text-plain">
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <textarea rows="5" placeholder="Your Message"></textarea>
+                <button type="submit">Send Message</button>
+            </form>
+            <div style="margin-top: 30px; text-align: center;">
+                <p><i data-lucide="mail" style="vertical-align: middle; width: 18px;"></i> rishi.peduru@gmail.com</p>
+                <p><i data-lucide="phone" style="vertical-align: middle; width: 18px;"></i> +91 7815852866</p>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <section id="contact" style="text-align: center;">
-            <h2 class="section-title" data-aos="fade-down">Get In Touch</h2>
-            <p data-aos="fade-up">Email: <a href="mailto:rishi.peduru@gmail.com" style="color:var(--primary-color)">rishi.peduru@gmail.com</a></p>
-            <p data-aos="fade-up" data-aos-delay="100">Mobile: +91 7815852866</p>
-        </section>
-    </div>
-
-    <footer>
-        &copy; 2026 P. Sri Rishikesh. Crafted for Excellence.
-    </footer>
+    <a href="tel:7815852866" class="dialer-btn" title="Call Me">
+        <i data-lucide="phone-call"></i>
+    </a>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
     <script>
         // Initialize Animations
-        AOS.init({ duration: 1000, once: false });
-
-        // Typing Effect
-        var typed = new Typed(".typing", {
-            strings: ["Programmer", "Computer Science Student", "Sports Enthusiast", "Life-long Learner"],
-            typeSpeed: 70,
-            backSpeed: 50,
-            loop: true
+        AOS.init({
+            duration: 1000,
+            once: true
         });
+        // Initialize Icons
+        lucide.createIcons();
     </script>
 </body>
-
 </html>
