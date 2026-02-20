@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P. Sri Rishikesh | Digital Architect</title>
+    <title>P. Sri Rishikesh | Technical Portfolio</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
@@ -14,10 +14,13 @@
     <style>
         :root {
             --accent: #00f2ff;
-            --bg: #050505;
+            --accent-glow: rgba(0, 242, 255, 0.3);
+            --bg: #030303;
+            --card-bg: rgba(255, 255, 255, 0.03);
             --text: #ffffff;
             --font-main: 'Inter', sans-serif;
             --font-heading: 'Syncopate', sans-serif;
+            --font-mono: 'Fira Code', monospace;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
@@ -27,292 +30,288 @@
             color: var(--text);
             font-family: var(--font-main);
             overflow-x: hidden;
-            line-height: 1.6;
         }
 
-        /* Custom Cursor */
+        /* --- Custom Cursor --- */
         #cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            background: var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-            transition: transform 0.1s ease;
+            position: fixed; width: 10px; height: 10px; background: var(--accent);
+            border-radius: 50%; pointer-events: none; z-index: 10000; mix-blend-mode: difference;
+        }
+        #cursor-follower {
+            position: fixed; width: 30px; height: 30px; border: 1px solid var(--accent);
+            border-radius: 50%; pointer-events: none; z-index: 9999; transition: transform 0.15s ease-out;
         }
 
-        #cursor-blur {
-            position: fixed;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(0, 242, 255, 0.15) 0%, transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9998;
-            transform: translate(-50%, -50%);
-        }
+        /* --- Background Canvas --- */
+        #main-canvas { position: fixed; top: 0; left: 0; z-index: -1; }
 
-        /* Smooth Scroll Container */
-        #main-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: -1;
-        }
-
-        /* Navigation */
+        /* --- Navigation --- */
         nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 30px 50px;
-            display: flex;
-            justify-content: space-between;
-            z-index: 100;
+            position: fixed; top: 0; width: 100%; padding: 40px;
+            display: flex; justify-content: space-between; z-index: 100;
         }
+        .logo { font-family: var(--font-heading); font-weight: 700; letter-spacing: 4px; color: var(--accent); }
 
-        .logo { font-family: var(--font-heading); font-weight: 700; font-size: 1.2rem; letter-spacing: 5px; }
+        /* --- Hero --- */
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .hero h1 { font-family: var(--font-heading); font-size: clamp(2rem, 8vw, 6rem); text-align: center; }
+        .glitch-text { color: var(--accent); font-family: var(--font-mono); font-size: 1.2rem; margin-top: 15px; }
 
-        /* Hero Section */
-        .hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
+        /* --- Sections --- */
+        section { min-height: 100vh; padding: 120px 8%; position: relative; }
+        .section-tag { font-family: var(--font-mono); color: var(--accent); margin-bottom: 20px; display: block; }
+        .section-title { font-family: var(--font-heading); font-size: 3rem; margin-bottom: 60px; }
 
-        .hero h1 {
-            font-family: var(--font-heading);
-            font-size: clamp(3rem, 10vw, 8rem);
-            line-height: 0.9;
-            text-transform: uppercase;
-        }
-
-        .hero .subtitle {
-            font-size: 1rem;
-            letter-spacing: 10px;
-            color: var(--accent);
-            margin-top: 20px;
-            opacity: 0;
-        }
-
-        /* Large Dynamic Sections */
-        section {
-            min-height: 100vh;
-            padding: 100px 10%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .reveal-text {
-            font-size: clamp(2rem, 5vw, 4rem);
-            font-family: var(--font-heading);
-            margin-bottom: 40px;
-        }
-
-        /* Bento Grid for Education/Skills */
+        /* --- Bento Grid Evolution --- */
         .bento-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(2, 300px);
+            grid-auto-rows: minmax(200px, auto);
             gap: 20px;
         }
 
         .bento-item {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 30px;
-            padding: 40px;
-            transition: 0.5s;
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 24px;
+            padding: 35px;
             position: relative;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
         }
 
         .bento-item:hover {
             border-color: var(--accent);
-            background: rgba(0, 242, 255, 0.05);
-            transform: translateY(-10px);
+            background: rgba(0, 242, 255, 0.02);
+            transform: scale(1.02);
         }
+
+        .bento-item h3 { font-family: var(--font-heading); font-size: 0.9rem; margin-bottom: 15px; color: #888; }
+        .bento-item p { font-size: 1.1rem; line-height: 1.6; }
 
         .large { grid-column: span 2; }
         .tall { grid-row: span 2; }
+        .full { grid-column: span 4; }
 
-        /* Contact Dialpad Button */
-        .contact-orb {
-            position: fixed;
-            bottom: 40px;
-            right: 40px;
-            width: 80px;
-            height: 80px;
-            background: var(--accent);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: black;
-            text-decoration: none;
-            z-index: 1000;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.5);
+        /* --- Strength Badges --- */
+        .strength-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .strength-badge {
+            background: rgba(0, 242, 255, 0.1);
+            border: 1px solid var(--accent);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-family: var(--font-mono);
         }
 
-        /* Stats Section */
-        .stat-circle {
-            font-family: var(--font-heading);
-            font-size: 5rem;
-            color: transparent;
-            -webkit-text-stroke: 1px var(--accent);
+        /* --- Terminal View for Job --- */
+        .terminal {
+            background: #000;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            border: 1px solid #333;
         }
+        .terminal-header { color: #555; margin-bottom: 10px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .code-keyword { color: #ff79c6; }
+        .code-func { color: #50fa7b; }
+        .code-string { color: #f1fa8c; }
 
-        footer {
-            padding: 50px;
-            text-align: center;
-            border-top: 1px solid rgba(255,255,255,0.1);
+        /* --- Dialer Button --- */
+        .fixed-call {
+            position: fixed; bottom: 40px; right: 40px; width: 70px; height: 70px;
+            background: var(--accent); border-radius: 50%; display: flex;
+            justify-content: center; align-items: center; color: #000;
+            z-index: 1000; transition: 0.3s; box-shadow: 0 0 20px var(--accent-glow);
         }
+        .fixed-call:hover { transform: scale(1.1) rotate(15deg); }
 
+        /* Mobile Adjustments */
+        @media (max-width: 900px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .large, .tall, .full { grid-column: span 1; grid-row: span 1; }
+            nav { padding: 20px; }
+        }
     </style>
 </head>
 <body>
 
     <div id="cursor"></div>
-    <div id="cursor-blur"></div>
+    <div id="cursor-follower"></div>
     <canvas id="main-canvas"></canvas>
 
     <nav>
         <div class="logo">P.SRI RISHIKESH</div>
-        <div class="nav-links">
-            <span>[ DEV / ATHLETE ]</span>
-        </div>
+        <div style="font-family: var(--font-mono); font-size: 0.8rem;">[ STATUS: AVAILABLE FOR HIRE ]</div>
     </nav>
 
     <section class="hero">
-        <h1 id="hero-name">RISHIKESH</h1>
-        <div class="subtitle">COMPUTER PROGRAMMER</div>
+        <span class="section-tag" data-aos="fade-down">SYSTEM.INIT()</span>
+        <h1 id="main-title">P. SRI<br><span style="color: var(--accent);">RISHIKESH</span></h1>
+        <p class="glitch-text">> COMPUTER_PROGRAMMER_FOUND_</p>
     </section>
 
-    <section id="about">
-        <h2 class="reveal-text">DRIVEN BY<br><span style="color: var(--accent);">INNOVATION.</span></h2>
+    <section id="intel">
+        <span class="section-tag">01 // ACADEMIC_INTEL</span>
+        <h2 class="section-title">THE FOUNDATION</h2>
+        
         <div class="bento-grid">
             <div class="bento-item large">
-                <h3>Bio</h3>
-                <p>A B.Tech graduate from Narayana College with a CGPA of 8.0. From KKR Gowtham School to the coding arena, I pursue excellence in every line of code.</p>
+                <h3>Bachelor of Technology</h3>
+                <h2>Narayana College</h2>
+                <p style="color: var(--accent); font-weight: 800; font-size: 2rem;">CGPA 8.0</p>
+                <p>Engineering the future through logic and consistent academic performance.</p>
             </div>
+
+            <div class="bento-item">
+                <h3>Schooling</h3>
+                <h2>KKR Gowtham School</h2>
+                <p>Where the journey of discipline and competitive learning began.</p>
+            </div>
+
             <div class="bento-item tall">
-                <h3>Core Stack</h3>
-                <ul style="list-style: none; margin-top: 20px;">
-                    <li>- Python</li>
-                    <li>- Java</li>
-                    <li>- C / C++</li>
-                    <li>- HTML/CSS</li>
-                </ul>
+                <h3>Core Strengths</h3>
+                <div class="strength-container">
+                    <span class="strength-badge">Problem Solving</span>
+                    <span class="strength-badge">Quick Learner</span>
+                    <span class="strength-badge">Adaptability</span>
+                    <span class="strength-badge">Disciplined</span>
+                    <span class="strength-badge">Team Player</span>
+                    <span class="strength-badge">Strategic Thinker</span>
+                </div>
+                <p style="margin-top: 20px; font-size: 0.9rem; color: #666;">
+                    "I am constantly interested in learning new things and increasing my technical depth."
+                </p>
+            </div>
+
+            <div class="bento-item">
+                <h3>Athletics</h3>
+                <h2>Sportsman</h2>
+                <p>I carry the "Good Sportsman" spirit—meaning I don't give up when a bug (or an opponent) gets tough.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="dev">
+        <span class="section-tag">02 // DEV_ENVIRONMENT</span>
+        <h2 class="section-title">THE CODER'S CRAFT</h2>
+        
+        <div class="bento-grid">
+            <div class="bento-item full">
+                <div class="terminal">
+                    <div class="terminal-header">bash — rishikesh@dev_portfolio — 80x24</div>
+                    <div><span class="code-keyword">class</span> <span class="code-func">Coder</span> {</div>
+                    <div>&nbsp;&nbsp;<span class="code-keyword">constructor</span>() {</div>
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;this.languages = [<span class="code-string">"Python"</span>, <span class="code-string">"C"</span>, <span class="code-string">"C++"</span>, <span class="code-string">"Java"</span>, <span class="code-string">"HTML"</span>];</div>
+                    <div>&nbsp;&nbsp;&nbsp;&nbsp;this.mission = <span class="code-string">"Build scalable solutions"</span>;</div>
+                    <div>&nbsp;&nbsp;}</div>
+                    <div>&nbsp;&nbsp;<span class="code-func">learnNewThing</span>(tech) { return this.skills.push(tech); }</div>
+                    <div>}</div>
+                </div>
+            </div>
+            
+            <div class="bento-item large">
+                <h3>Current Identity</h3>
+                <h2>Computer Programmer</h2>
+                <p>Specialized in backend logic and structural coding. I translate complex human requirements into clean, efficient machine instructions.</p>
+            </div>
+            
+            <div class="bento-item large">
+                <h3>Tech Stack</h3>
+                <p><strong>Primary:</strong> Python, C++, Java<br><strong>Web:</strong> HTML5, CSS3, Modern JS</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="lifestyle">
+        <span class="section-tag">03 // HUMAN_INTERNALS</span>
+        <h2 class="section-title">BEYOND THE TERMINAL</h2>
+        <div class="bento-grid">
+            <div class="bento-item">
+                <i data-lucide="music"></i>
+                <h3>Audio</h3>
+                <p>Listening to Music</p>
             </div>
             <div class="bento-item">
-                <h3>Languages</h3>
-                <p>English, Hindi, Telugu</p>
+                <i data-lucide="book-open"></i>
+                <h3>Knowledge</h3>
+                <p>Reading Books</p>
             </div>
-            <div class="bento-item large">
-                <h3>Athletic DNA</h3>
-                <p>Good sportsman mindset. Resilience on the field, precision in the terminal.</p>
+            <div class="bento-item">
+                <i data-lucide="gamepad-2"></i>
+                <h3>Strategy</h3>
+                <p>Playing Games</p>
+            </div>
+            <div class="bento-item">
+                <i data-lucide="languages"></i>
+                <h3>Linguistics</h3>
+                <p>Hindi, Telugu, English</p>
             </div>
         </div>
     </section>
 
-    <section id="hobbies">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h2 class="reveal-text">OUTSIDE THE<br>CODE_</h2>
-            <div class="stat-circle">03</div>
-        </div>
-        <div class="bento-grid" style="grid-template-rows: 200px;">
-            <div class="bento-item"><h4>Reading</h4></div>
-            <div class="bento-item"><h4>Gaming</h4></div>
-            <div class="bento-item"><h4>Music</h4></div>
-            <div class="bento-item"><h4>Sports</h4></div>
+    <section id="contact">
+        <h2 class="section-title" style="text-align: center;">SECURE_CONNECTION</h2>
+        <div style="text-align: center;">
+            <p style="font-size: 1.5rem;">rishi.peduru@gmail.com</p>
+            <h1 style="font-size: 4vw; color: var(--accent);">+91 7815852866</h1>
         </div>
     </section>
 
-    <section id="contact" style="text-align: center;">
-        <h2 class="reveal-text">READY TO START?</h2>
-        <p>rishi.peduru@gmail.com</p>
-        <h1 style="font-size: 5vw; margin-top: 20px;">+91 7815852866</h1>
-    </section>
-
-    <a href="tel:7815852866" class="contact-orb">
+    <a href="tel:7815852866" class="fixed-call">
         <i data-lucide="phone-call"></i>
     </a>
 
-    <footer>
-        <p>&copy; 2026 P. Sri Rishikesh. Built for the future.</p>
-    </footer>
-
     <script>
-        // 1. Initialize Lucide Icons
+        // 1. Setup Icons
         lucide.createIcons();
 
-        // 2. Custom Cursor Logic
+        // 2. Custom Cursor
         const cursor = document.getElementById('cursor');
-        const blur = document.getElementById('cursor-blur');
+        const follower = document.getElementById('cursor-follower');
         document.addEventListener('mousemove', (e) => {
-            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.1 });
-            gsap.to(blur, { x: e.clientX, y: e.clientY, duration: 0.5 });
+            gsap.to(cursor, {x: e.clientX, y: e.clientY, duration: 0});
+            gsap.to(follower, {x: e.clientX - 15, y: e.clientY - 15, duration: 0.3});
         });
 
-        // 3. Three.js Background (The "Shock" Factor)
+        // 3. Three.js Background
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('main-canvas'), alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-        const particlesGeometry = new THREE.BufferGeometry();
-        const count = 3000;
-        const positions = new Float32Array(count * 3);
-
-        for(let i = 0; i < count * 3; i++) {
-            positions[i] = (Math.random() - 0.5) * 10;
-        }
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const material = new THREE.PointsMaterial({ size: 0.005, color: 0x00f2ff });
-        const points = new THREE.Points(particlesGeometry, material);
+        const geo = new THREE.BufferGeometry();
+        const pos = new Float32Array(2000 * 3);
+        for(let i=0; i<6000; i++) pos[i] = (Math.random()-0.5) * 10;
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        const mat = new THREE.PointsMaterial({ size: 0.005, color: 0x00f2ff });
+        const points = new THREE.Points(geo, mat);
         scene.add(points);
-        camera.position.z = 2;
+        camera.position.z = 3;
 
         function animate() {
             requestAnimationFrame(animate);
-            points.rotation.y += 0.001;
-            points.rotation.x += 0.0005;
+            points.rotation.y += 0.0005;
             renderer.render(scene, camera);
         }
         animate();
 
-        // 4. GSAP Scroll Animations
+        // 4. GSAP Animations
         gsap.registerPlugin(ScrollTrigger);
-
-        gsap.to(".hero h1", {
-            scrollTrigger: {
-                trigger: ".hero",
-                start: "top top",
-                scrub: true
-            },
-            y: 200,
-            opacity: 0
+        
+        gsap.utils.toArray('.bento-item').forEach(item => {
+            gsap.from(item, {
+                scrollTrigger: { trigger: item, start: "top 90%" },
+                y: 50, opacity: 0, duration: 1, ease: "power4.out"
+            });
         });
 
-        gsap.from(".bento-item", {
-            scrollTrigger: {
-                trigger: ".bento-grid",
-                start: "top 80%"
-            },
-            y: 100,
-            opacity: 0,
-            stagger: 0.2,
-            duration: 1
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
-        // Entry Animation
-        gsap.to(".subtitle", { opacity: 1, duration: 2, delay: 0.5 });
     </script>
 </body>
 </html>
